@@ -5,6 +5,7 @@ class AuthRouter {
 
   constructor() {
     this.routes = Express.Router();
+    this.SetRoutes();
   }
 
   SetRoutes() {

@@ -1,6 +1,5 @@
 import Express from "express";
 import multer from "multer";
-import path from "path";
 
 const upload: Express.RequestHandler = multer({
   storage: multer.diskStorage({
@@ -8,7 +7,7 @@ const upload: Express.RequestHandler = multer({
       cb(null, "static");
     },
     filename: (req, file, cb) => {
-      cb(null, `mailbox-image-${Date.now()}${path.extname(file.originalname)}`);
+      cb(null, `pure-oneday-${Date.now()}.png`);
     },
   }),
 }).single("image");
@@ -18,6 +17,20 @@ class DongbaekRouter {
 
   constructor() {
     this.routes = Express.Router();
+    this.SetRoutes();
+  }
+
+  SetRoutes() {
+    this.routes.post(
+      "/",
+      upload,
+      (req: Express.Request, res: Express.Response) => {
+        console.log(req.file);
+        return res.status(201).json({
+          message: "Dongbaek 저장 API",
+        });
+      }
+    );
   }
 }
 
