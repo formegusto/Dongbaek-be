@@ -1,6 +1,8 @@
 import Express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
+import cors from "cors";
+import routes from "./routes";
 
 dotenv.config();
 
@@ -15,7 +17,12 @@ class App {
   }
 
   SetMW() {
+    this.server.use(cors());
     this.server.use(morgan("dev"));
+    this.server.use(Express.json());
+    this.server.use("/static", Express.static("static"));
+
+    this.server.use(routes);
   }
 
   Start() {
