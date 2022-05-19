@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import cors from "cors";
 import routes from "./routes";
+import mongooseInit from "./models";
 
 dotenv.config();
 
@@ -30,6 +31,9 @@ class App {
 
     this.server.listen(port, () => {
       console.log(`[Express] Server Listen PORT ${port} :)`);
+      (async function () {
+        await mongooseInit();
+      })();
     });
   }
 }
