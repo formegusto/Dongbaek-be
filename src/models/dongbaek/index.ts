@@ -5,6 +5,8 @@ const DongbaekSchema = new Schema<Dongbaek>(
   {
     title: { type: String, required: true },
     image: { type: String, required: true },
+    createdAt: { type: String, required: true },
+    _userId: { type: String, required: true },
   },
   {
     collection: "Dongbaek",
