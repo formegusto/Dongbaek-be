@@ -4,6 +4,7 @@ import loginCheck from "../middlewares/loginCheck";
 import { Dongbaek } from "../models/dongbaek/types";
 import moment from "moment-timezone";
 import DongbaekModel from "../models/dongbaek";
+import dongbaekCheck from "../middlewares/dongbaekCheck";
 
 const upload: Express.RequestHandler = multer({
   storage: multer.diskStorage({
@@ -52,26 +53,13 @@ class DongbaekRouter {
 
     this.routes.get(
       "/:id",
+      dongbaekCheck,
       async (req: Express.Request, res: Express.Response) => {
         try {
-          const { id } = req.params;
-          const { id: _userId } = req.auth!;
-
-          const dongbaek = await DongbaekModel.findById(id);
-          if (!dongbaek) {
-            return res.status(404).json({
-              message: "존재하지 않는 추억입니다.",
-            });
-          }
-
-          if (dongbaek._userId !== _userId) {
-            return res.status(401).json({
-              message: "당신의 추억이 아닙니다.",
-            });
-          }
+          const dongbaek = req.dongbaek!;
 
           return res.status(200).json({
-            message: `Dongbaek ${id}`,
+            message: `조회가 완료되었습니다.`,
             dongbaek,
           });
         } catch (err) {
@@ -112,6 +100,71 @@ class DongbaekRouter {
 
           return res.status(201).json({
             message: "성공적으로 저장 되었습니다.",
+            dongbaek,
+          });
+        } catch (err) {
+          return res.status(500).json({
+            message: "시스템 오류 입니다.",
+          });
+        }
+      }
+    );
+
+    this.routes.patch(
+      "/:id",
+      dongbaekCheck,
+      async (
+        req: Express.Request<any, any, { title: string }>,
+        res: Express.Response
+      ) => {
+        try {
+          const { id } = req.params;
+          const { title } = req.body;
+
+          const _dongbaek = await DongbaekModel.updateOne(
+            {
+              id,
+            },
+            {
+              $set: {
+                title,
+              },
+            }
+          );
+          const dongbaek = await DongbaekModel.findById(id, {
+            title: 1,
+            image: 1,
+            createdAt: 1,
+            _id: 0,
+            _userId: 1,
+          });
+
+          console.log(dongbaek);
+
+          return res.status(200).json({
+            message: "수정이 완료되었습니다.",
+            dongbaek,
+          });
+        } catch (err) {
+          return res.status(500).json({
+            message: "시스템 오류 입니다.",
+          });
+        }
+      }
+    );
+
+    this.routes.delete(
+      "/:id",
+      dongbaekCheck,
+      async (req: Express.Request, res: Express.Response) => {
+        try {
+          const { id } = req.params!;
+          const dongbaek = await DongbaekModel.deleteOne({
+            id,
+          });
+
+          return res.status(200).json({
+            message: "삭제가 완료되었습니다.",
             dongbaek,
           });
         } catch (err) {

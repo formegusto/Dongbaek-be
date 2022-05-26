@@ -4,5 +4,12 @@ declare namespace Express {
       id?: string;
       username: string;
     };
+    dongbaek?: {
+      id?: string;
+      title: string;
+      image: string;
+      createdAt: string;
+      _userId: string;
+    };
   }
 }
