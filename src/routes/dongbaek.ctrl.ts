@@ -21,6 +21,12 @@ class DongbaekRouter {
   }
 
   SetRoutes() {
+    this.routes.get("/", (req: Express.Request, res: Express.Response) => {
+      return res.status(201).json({
+        message: "Dongbaek List",
+      });
+    });
+
     this.routes.post(
       "/",
       upload,
