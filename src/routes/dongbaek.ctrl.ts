@@ -36,7 +36,7 @@ class DongbaekRouter {
             {
               _userId,
             },
-            { title: 1, image: 1, createdAt: 1, _id: 0 }
+            { title: 1, image: 1, createdAt: 1 }
           ).sort({ createdAt: -1 });
 
           return res.status(200).json({
@@ -103,6 +103,7 @@ class DongbaekRouter {
             dongbaek,
           });
         } catch (err) {
+          console.error(err);
           return res.status(500).json({
             message: "시스템 오류 입니다.",
           });
@@ -135,7 +136,6 @@ class DongbaekRouter {
             title: 1,
             image: 1,
             createdAt: 1,
-            _id: 0,
             _userId: 1,
           });
 

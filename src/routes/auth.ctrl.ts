@@ -62,14 +62,16 @@ class AuthRouter {
     this.routes.post(
       "/sign-up",
       async (req: Express.Request<any, any, Auth>, res: Express.Response) => {
-        const { username, password } = req.body;
+        const { username, password, config } = req.body;
+
+        console.log(username);
 
         try {
           const isExist = await AuthModel.findOne({
-            where: {
-              username: username,
-            },
+            username: username,
           });
+
+          console.log(isExist);
 
           if (isExist) {
             return res.status(400).json({
@@ -81,6 +83,7 @@ class AuthRouter {
           const auth: Auth = {
             username,
             password: _password,
+            config,
           };
           const { id } = await AuthModel.create(auth);
           const _auth = await AuthModel.findById(id);

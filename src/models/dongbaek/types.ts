@@ -1,5 +1,5 @@
 export type Dongbaek = {
-  id?: string;
+  _id?: string;
   title: string;
   image: string;
   createdAt: string;

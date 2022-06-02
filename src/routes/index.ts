@@ -15,8 +15,7 @@ class IndexRouter {
 
     for (let i = 0; i < res.length; i++) {
       const routerFile = res[i];
-      if (routerFile.includes("index") || routerFile.includes("process"))
-        continue;
+      if (routerFile.includes("index")) continue;
 
       const _ = await import(path.resolve(__dirname, routerFile));
       const routePath = "/" + routerFile.split(".")[0];
