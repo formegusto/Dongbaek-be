@@ -5,6 +5,7 @@ export type Filter = {
 
 export type Config = {
   filter?: Filter;
+  timer?: number;
 };
 
 export type Auth = {

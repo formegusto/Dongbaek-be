@@ -39,10 +39,21 @@ class ConfigRouter {
           const { id } = req.auth!;
           const config = req.body;
 
-          const result = await AuthModel.updateOne(
+          const check = await AuthModel.findById(
             { _id: id },
-            { $set: { config: config } }
+            { config: 1, _id: 0 }
           );
+          if (check?.config) {
+            await AuthModel.updateOne(
+              { _id: id },
+              { $set: { config: { ...check.config, ...config } } }
+            );
+          } else {
+            await AuthModel.updateOne(
+              { _id: id },
+              { $set: { config: config } }
+            );
+          }
 
           return res.status(200).json({
             message: "설정 변경이 완료 되었습니다. :)",
