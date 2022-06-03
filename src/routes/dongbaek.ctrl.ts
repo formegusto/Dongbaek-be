@@ -1,7 +1,7 @@
 import Express from "express";
 import multer from "multer";
 import loginCheck from "../middlewares/loginCheck";
-import { Dongbaek } from "../models/dongbaek/types";
+import { Dongbaek, ReqDonbaek } from "../models/dongbaek/types";
 import moment from "moment-timezone";
 import DongbaekModel from "../models/dongbaek";
 import dongbaekCheck from "../middlewares/dongbaekCheck";
@@ -36,7 +36,7 @@ class DongbaekRouter {
             {
               _userId,
             },
-            { title: 1, image: 1, createdAt: 1 }
+            { title: 1, image: 1, createdAt: 1, filter: 1 }
           ).sort({ createdAt: -1 });
 
           return res.status(200).json({
@@ -74,7 +74,7 @@ class DongbaekRouter {
       "/",
       upload,
       async (
-        req: Express.Request<any, any, Dongbaek>,
+        req: Express.Request<any, any, ReqDonbaek>,
         res: Express.Response
       ) => {
         const file = req.file;
@@ -86,7 +86,7 @@ class DongbaekRouter {
         }
 
         try {
-          const { title } = req.body;
+          const { title, filterName, filterClass } = req.body;
           const { path: image } = file;
           const { id: _userId } = req.auth!;
           const createdAt = moment(new Date()).format("YYYY-MM-DDTHH:mm:ss");
@@ -96,6 +96,10 @@ class DongbaekRouter {
             image,
             _userId,
             createdAt,
+            filter: {
+              name: filterName,
+              className: filterClass,
+            },
           });
 
           return res.status(201).json({
