@@ -126,13 +126,13 @@ class DongbaekRouter {
           const { id } = req.params;
           const { title } = req.body;
 
-          const _dongbaek = await DongbaekModel.updateOne(
+          const result = await DongbaekModel.updateOne(
             {
-              id,
+              _id: id,
             },
             {
               $set: {
-                title,
+                title: title,
               },
             }
           );
@@ -140,10 +140,8 @@ class DongbaekRouter {
             title: 1,
             image: 1,
             createdAt: 1,
-            _userId: 1,
+            filter: 1,
           });
-
-          console.log(dongbaek);
 
           return res.status(200).json({
             message: "수정이 완료되었습니다.",
@@ -164,7 +162,7 @@ class DongbaekRouter {
         try {
           const { id } = req.params!;
           const dongbaek = await DongbaekModel.deleteOne({
-            id,
+            _id: id,
           });
 
           return res.status(200).json({
