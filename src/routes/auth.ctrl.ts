@@ -3,6 +3,7 @@ import AuthModel from "../models/auth";
 import { Auth } from "../models/auth/types";
 import bcrypt from "bcrypt";
 import jwt, { JsonWebTokenError } from "jsonwebtoken";
+import refreshToken from "../utils/refreshToken";
 
 class AuthRouter {
   routes: Express.Router;
@@ -43,7 +44,18 @@ class AuthRouter {
             },
             process.env.JWT_SECRET!,
             {
-              expiresIn: "3h",
+              expiresIn: "1s",
+            }
+          );
+
+          await AuthModel.updateOne(
+            {
+              _id: id,
+            },
+            {
+              $set: {
+                token: token,
+              },
             }
           );
 
@@ -156,38 +168,9 @@ class AuthRouter {
               });
 
               if (isExisted) {
-                const { id, username } = isExisted;
-                const secret = process.env.JWT_SECRET!;
-                const token = jwt.sign(
-                  {
-                    id,
-                    username,
-                  },
-                  secret,
-                  {
-                    algorithm: "HS256",
-                    expiresIn: "1s",
-                  }
-                );
-
-                await AuthModel.updateOne(
-                  {
-                    _id: id,
-                  },
-                  {
-                    $set: {
-                      token: token,
-                    },
-                  }
-                );
-
                 return res.status(201).json({
                   message: "new token refresh",
-                  token,
-                  auth: {
-                    id,
-                    username,
-                  },
+                  ...(await refreshToken(isExisted)),
                 });
               }
             }
