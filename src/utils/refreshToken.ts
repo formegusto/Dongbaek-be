@@ -13,7 +13,7 @@ export default async function refreshToken(isExisted: Auth) {
     secret,
     {
       algorithm: "HS256",
-      expiresIn: "1s",
+      expiresIn: "3h",
     }
   );
 

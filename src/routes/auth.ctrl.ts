@@ -44,7 +44,7 @@ class AuthRouter {
             },
             process.env.JWT_SECRET!,
             {
-              expiresIn: "1s",
+              expiresIn: "3h",
             }
           );
 
@@ -111,7 +111,7 @@ class AuthRouter {
               secret,
               {
                 algorithm: "HS256",
-                expiresIn: "1s",
+                expiresIn: "3h",
               }
             );
             await AuthModel.updateOne(
