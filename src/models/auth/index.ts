@@ -6,6 +6,7 @@ const AuthSchema = new Schema<Auth>(
     username: { type: String, required: true },
     password: { type: String, required: true },
     config: { type: Schema.Types.Mixed },
+    token: { type: String, require: false },
   },
   {
     collection: "Auth",

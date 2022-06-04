@@ -18,13 +18,12 @@ export default async function loginCheck(
 
   try {
     const auth = jwt.verify(token, secret) as Auth;
-
     req.auth = auth;
 
     return next();
   } catch (err) {
     return res.status(401).json({
-      message: "로그인이 필요한 서비스입니다.",
+      message: "Bad Token",
     });
   }
 }

@@ -2,7 +2,7 @@ import Express from "express";
 import AuthModel from "../models/auth";
 import { Auth } from "../models/auth/types";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import jwt, { JsonWebTokenError } from "jsonwebtoken";
 
 class AuthRouter {
   routes: Express.Router;
@@ -85,8 +85,8 @@ class AuthRouter {
             password: _password,
             config,
           };
-          const { id } = await AuthModel.create(auth);
-          const _auth = await AuthModel.findById(id);
+          const { _id } = await AuthModel.create(auth);
+          const _auth = await AuthModel.findById(_id);
 
           if (_auth) {
             const { id, username } = _auth;
@@ -99,7 +99,17 @@ class AuthRouter {
               secret,
               {
                 algorithm: "HS256",
-                expiresIn: "3h",
+                expiresIn: "1s",
+              }
+            );
+            await AuthModel.updateOne(
+              {
+                _id: id,
+              },
+              {
+                $set: {
+                  token: token,
+                },
               }
             );
 
@@ -118,32 +128,77 @@ class AuthRouter {
       }
     );
 
-    this.routes.get("/check", (req: Express.Request, res: Express.Response) => {
-      const token = req.headers.authorization;
+    this.routes.get(
+      "/check",
+      async (req: Express.Request, res: Express.Response) => {
+        const token = req.headers.authorization;
 
-      if (!token) {
-        return res.status(400).json({
-          message: "Authorization Required",
-        });
-      } else {
-        try {
-          const secret = process.env.JWT_SECRET!;
-          const { id, username } = jwt.verify(token, secret) as Auth;
+        if (!token) {
+          return res.status(400).json({
+            message: "Authorization Required",
+          });
+        } else {
+          try {
+            const secret = process.env.JWT_SECRET!;
+            const { id, username } = jwt.verify(token, secret) as Auth;
 
-          return res.status(200).json({
-            message: "Token Check Success",
-            auth: {
-              id,
-              username,
-            },
-          });
-        } catch (err) {
-          return res.status(401).json({
-            message: "Bad Token",
-          });
+            return res.status(200).json({
+              message: "Token Check Success",
+              auth: {
+                id,
+                username,
+              },
+            });
+          } catch (err) {
+            if ((err as JsonWebTokenError).message === "jwt expired") {
+              const isExisted = await AuthModel.findOne({
+                token: token,
+              });
+
+              if (isExisted) {
+                const { id, username } = isExisted;
+                const secret = process.env.JWT_SECRET!;
+                const token = jwt.sign(
+                  {
+                    id,
+                    username,
+                  },
+                  secret,
+                  {
+                    algorithm: "HS256",
+                    expiresIn: "1s",
+                  }
+                );
+
+                await AuthModel.updateOne(
+                  {
+                    _id: id,
+                  },
+                  {
+                    $set: {
+                      token: token,
+                    },
+                  }
+                );
+
+                return res.status(201).json({
+                  message: "new token refresh",
+                  token,
+                  auth: {
+                    id,
+                    username,
+                  },
+                });
+              }
+            }
+
+            return res.status(401).json({
+              message: "Bad Token",
+            });
+          }
         }
       }
-    });
+    );
   }
 }
 
