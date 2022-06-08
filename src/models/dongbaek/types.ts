@@ -9,7 +9,8 @@ export type Dongbaek = {
   filter?: Filter;
 };
 
-export type ReqDonbaek = {
+// Dongbaek 업로드 시, image를 제외한 요청 정보
+export type ReqDongbaek = {
   title: string;
   filterName: string;
   filterClass: string;

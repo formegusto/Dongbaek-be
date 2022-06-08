@@ -7,10 +7,13 @@ class IndexRouter {
 
   constructor() {
     this.routes = Express.Router();
+
+    // Setting Routes
     this.SetRoutes();
   }
 
   async SetRoutes() {
+    // 현재 디렉터리에 있는 모든 router 파일들을 파싱하여 import 한다.
     const res = fs.readdirSync(path.resolve(__dirname));
 
     for (let i = 0; i < res.length; i++) {

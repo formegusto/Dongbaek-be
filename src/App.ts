@@ -13,7 +13,10 @@ class App {
   constructor() {
     this.server = Express();
 
+    // Server MiddleWare Setting
     this.SetMW();
+
+    // Server Start
     this.Start();
   }
 

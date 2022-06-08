@@ -1,7 +1,7 @@
 import Express from "express";
 import multer from "multer";
 import loginCheck from "../middlewares/loginCheck";
-import { Dongbaek, ReqDonbaek } from "../models/dongbaek/types";
+import { Dongbaek, ReqDongbaek } from "../models/dongbaek/types";
 import moment from "moment-timezone";
 import DongbaekModel from "../models/dongbaek";
 import dongbaekCheck from "../middlewares/dongbaekCheck";
@@ -12,7 +12,7 @@ const upload: Express.RequestHandler = multer({
       cb(null, "static");
     },
     filename: (req, file, cb) => {
-      cb(null, `pure-oneday-${Date.now()}.png`);
+      cb(null, `dongbaek-${Date.now()}.png`);
     },
   }),
 }).single("image");
@@ -22,11 +22,15 @@ class DongbaekRouter {
 
   constructor() {
     this.routes = Express.Router();
+    // Authorization Required
     this.routes.use(loginCheck);
+
+    // Setting Routes
     this.SetRoutes();
   }
 
   SetRoutes() {
+    // 사진 리스트 조회
     this.routes.get(
       "/",
       async (req: Express.Request, res: Express.Response) => {
@@ -51,6 +55,7 @@ class DongbaekRouter {
       }
     );
 
+    // 사진 상세 조회 API
     this.routes.get(
       "/:id",
       dongbaekCheck,
@@ -70,11 +75,12 @@ class DongbaekRouter {
       }
     );
 
+    // 사진 업로드 API
     this.routes.post(
       "/",
       upload,
       async (
-        req: Express.Request<any, any, ReqDonbaek>,
+        req: Express.Request<any, any, ReqDongbaek>,
         res: Express.Response
       ) => {
         const file = req.file;
@@ -115,6 +121,7 @@ class DongbaekRouter {
       }
     );
 
+    // 사진 정보 수정 API
     this.routes.patch(
       "/:id",
       dongbaekCheck,
@@ -126,7 +133,7 @@ class DongbaekRouter {
           const { id } = req.params;
           const { title } = req.body;
 
-          const result = await DongbaekModel.updateOne(
+          await DongbaekModel.updateOne(
             {
               _id: id,
             },
@@ -155,6 +162,7 @@ class DongbaekRouter {
       }
     );
 
+    // 사진 삭제 API
     this.routes.delete(
       "/:id",
       dongbaekCheck,
