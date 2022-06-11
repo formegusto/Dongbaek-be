@@ -133,6 +133,8 @@ class DongbaekRouter {
           const { id } = req.params;
           const { title } = req.body;
 
+          console.log(`${id} 사진 수정 내용 : ${title}`);
+
           await DongbaekModel.updateOne(
             {
               _id: id,

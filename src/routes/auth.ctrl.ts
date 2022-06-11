@@ -162,8 +162,13 @@ class AuthRouter {
         } else {
           // 2. 토큰 유효성 검사
           try {
+            // 2-1. JWT 유효성 검사
             const secret = process.env.JWT_SECRET!;
             const { id, username } = jwt.verify(token, secret) as Auth;
+
+            // 2-2. 사용자 존재 여부 검사
+            const user = await AuthModel.findOne({ _id: id });
+            if (!user) throw new Error("Bad User");
 
             // 3. 토큰 복호화 결과 (eq. 인증정보) 응답
             return res.status(200).json({

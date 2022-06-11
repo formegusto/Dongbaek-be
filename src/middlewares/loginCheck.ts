@@ -20,15 +20,15 @@ export default async function loginCheck(
   }
 
   try {
-    // 3. Token 유효성 검사
+    // 4. Token 유효성 검사
     const auth = jwt.verify(token, secret) as Auth;
 
-    // 4. 다음 라우터에서 인증 정보를 필요로 할 수 있으니, request 객체에 담아서 넘겨준다.
+    // 5. 다음 라우터에서 인증 정보를 필요로 할 수 있으니, request 객체에 담아서 넘겨준다.
     req.auth = auth;
 
     return next();
   } catch (err) {
-    // 3-err. 유효하지 않은 토큰으로 401 Unauthorized
+    // 6-err. 유효하지 않은 토큰으로 401 Unauthorized
     return res.status(401).json({
       message: "Bad Token",
     });
